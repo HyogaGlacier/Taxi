@@ -18,6 +18,7 @@ def mul(a,k):
 
 
 font = pygame.font.Font(None, 30)
+font20 = pygame.font.Font(None, 20)
 
 #set rel_dir_t
 def D_LEFT(d):
@@ -475,6 +476,7 @@ def gaming(screen):
         text = font.render(code[-1],True,(0,0,0))
         screen.blit(text, [400,height-40])
     x,y = pygame.mouse.get_pos()
+    onpos = False
     for i in road:
         pygame.draw.line(screen, (200,50,0), i[0], i[1])
     for key,val in loclist.items():
@@ -487,10 +489,21 @@ def gaming(screen):
                 screen.blit(text, [val.x-text.get_width()/2,val.y+10])
                 text = font.render(key + ": " + val.description, True, (0,0,0))
                 screen.blit(text, [250, 20])
+                # -200にoutgoing
+                pygame.draw.rect(screen, (200, 0, 0), Rect(width - 200, 0, 200, height))
+                for i in range(min(len(val.outgoing),3)):
+                    pygame.draw.rect(screen, (255,100,100), Rect(width - 190, 200*i+10, 180,180))
+                    text = font.render(str(val.outgoing[i]), True, (255,255,255))
+                    screen.blit(text,[width - 180, 200 * i + 85])
+                onpos = True
             else:
                 pygame.draw.rect(screen, (0,80,0), Rect(val.x-10,val.y-10,20,20))
                 text = font.render(key, True, (0, 80, 0))
                 screen.blit(text, [val.x-text.get_width()/2,val.y+10])
+            if len(val.outgoing) > 0:
+                pygame.draw.circle(screen, (100,100,200), (val.x+10,val.y-10), 10)
+                text = font20.render(str(len(val.outgoing)), True, (255,255,255))
+                screen.blit(text, [val.x + 10 - text.get_width()/2, val.y - 10-text.get_height()/2])
         
     car.update()
     d=car.direction if car.direction>=0 else 4+car.direction
@@ -510,19 +523,21 @@ def gaming(screen):
         pygame.draw.rect(screen, (0,200,0), Rect(10,200*i+10,180,180))
         text = font.render(str(car.passengers[i])[:10], True, (255, 255, 255))
         screen.blit(text, [20, 200*i+85])
+    
     #-200-にoutgoingを表示
-    pygame.draw.rect(screen, (100, 100, 100), Rect(width - 200, 0, 200, height))
-    if not the_map[car.x][car.y] is None and len(the_map[car.x][car.y].outgoing) > 0:
-        if car.willpickup==True:
-            pygame.draw.rect(screen, (0, 200, 0),Rect(width - 190, 10, 180, 180))
-        else:
-            pygame.draw.rect(screen, (200, 0, 0), Rect(width - 190, 10, 180, 180))
-        text = font.render(str(the_map[car.x][car.y].outgoing[0]), True, (255, 255, 255))
-        screen.blit(text,[width - 180, 85])
-        for i in range(1,min(len(the_map[car.x][car.y].outgoing),3)):
-            pygame.draw.rect(screen, (200,0,0), Rect(width - 190, 200*i+10, 180,180))
-            text = font.render(str(the_map[car.x][car.y].outgoing[i]), True, (255,255,255))
-            screen.blit(text,[width - 180, 200 * i + 85])
+    if not onpos:
+        pygame.draw.rect(screen, (100, 100, 100), Rect(width - 200, 0, 200, height))
+        if not the_map[car.x][car.y] is None and len(the_map[car.x][car.y].outgoing) > 0:
+            if car.willpickup==True:
+                pygame.draw.rect(screen, (0, 200, 0),Rect(width - 190, 10, 180, 180))
+            else:
+                pygame.draw.rect(screen, (200, 0, 0), Rect(width - 190, 10, 180, 180))
+            text = font.render(str(the_map[car.x][car.y].outgoing[0]), True, (255, 255, 255))
+            screen.blit(text,[width - 180, 85])
+            for i in range(1,min(len(the_map[car.x][car.y].outgoing),3)):
+                pygame.draw.rect(screen, (200,0,0), Rect(width - 190, 200*i+10, 180,180))
+                text = font.render(str(the_map[car.x][car.y].outgoing[i]), True, (255,255,255))
+                screen.blit(text,[width - 180, 200 * i + 85])
     
     for event in pygame.event.get():
         if event.type == QUIT:
