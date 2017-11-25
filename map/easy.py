@@ -2,7 +2,7 @@ import sys
 sys.path.append("..")
 from driver import *
 
-def setEasy(w, h):
+def set(w, h):
     loclist = {}
     the_map = [[None for i in range(h)]for j in range(w)]
 

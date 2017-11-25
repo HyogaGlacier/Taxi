@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import sys
 import os
+import importlib
 
 # データベース初期設定
 import mysql.connector
@@ -11,10 +12,12 @@ cur=conn.cursor()
 txtrank = []
 runrank = []
 def updatesql():
+    global cur, conn, problemstr, mapsttr, txtrank, runrank
     cur.execute("SELECT name, txt FROM ranking WHERE map = \"" + mapstr + "\" AND problem = \"" + problemstr + "\" ORDER BY txt LIMIT 5")
     txtrank = cur.fetchall()
     cur.execute("SELECT name, run FROM ranking WHERE map = \"" + mapstr + "\" AND problem = \"" + problemstr + "\" ORDER BY run LIMIT 5")
     runrank = cur.fetchall()
+    conn.commit()
 
 # ゲームの状態遷移
 G_TITLE = 0
@@ -37,7 +40,7 @@ def gameend():
     pygame.quit()
     cur.close
     conn.close
-    sys.quit()
+    sys.exit()
 
 # 引数の2番目をFULLSCREENにするとフルスクリーンになります
 screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
@@ -66,15 +69,18 @@ mapselector = 0
 setupMapfunction = None
 #mapのインポート
 def mapset():
-    maps = __import__("map." + maplist[mapselector])
+    global maplist, mapselector, maps, setupMapfunction, car, the_map, loclist, road, w, h
+    maps = importlib.import_module("map." + maplist[mapselector])
     mapstr = maplist[mapselector]
     setupMapfunction = maps.set
     car, the_map, loclist, road = setupMapfunction(w, h)
 #mapモジュールの削除
 def mapdelete():
+    global mapstr, maps, mapselector, setupMapfunction
     if "map." + mapstr in sys.modules:
         sys.modules.pop("map." + mapstr)
         mapstr = ""
+        maps = None
         setupMapfunction = None
         mapselector = 0
 
@@ -91,12 +97,14 @@ problems = None
 problemselector = 0
 #problemのインポート
 def problemset():
+    global problemstr, problemlist, problemselector, problems, car, loclist, the_map, road, w, h
     problemstr = problemlist[problemselector]
-    problems = __import__("problem." + problemstr)
+    problems = importlib.import_module("problem." + problemstr)
     problems.set_problem(loclist)
     setup(car, loclist, the_map, road, h, w, False)
 #problemモジュールの削除
 def problemdelete():
+    global problemstr, problems, problemselector
     if "problem." + problemstr in sys.modules:
         sys.modules.pop("problem." + problemstr)
         problemselector = 0
@@ -194,9 +202,7 @@ while True:
                         mapselector = 0
                         mode = G_TITLE
                     else:
-                        maps = __import__("map." + maplist[i])
                         mapset()
-                        problemdelete()
                         mode = G_SELECT_PROBLEM
     
     #問題設定画面
@@ -214,11 +220,11 @@ while True:
         for i in range(len(problemlist)):
             if i == problemselector:
                 text = font80.render(problemlist[i], True, (255, 255, 255))
-                pygame.draw.rect(screen, (0, 0, 0), Rect(w / 2 - 120, (h - 80) / 2 - (len(maplist) / 2 - i) * 100, 240, 80))
+                pygame.draw.rect(screen, (0, 0, 0), Rect(w / 2 - 120, (h - 80) / 2 - (len(problemlist) / 2 - i) * 100, 240, 80))
             else:
                 text = font80.render(problemlist[i], True, (0, 0, 0))
                 pygame.draw.rect(screen, (255, 255, 255), Rect(w / 2 - 120, (h - 80) / 2 - (len(maplist) / 2 - i) * 100, 240, 80))
-            screen.blit(text, [(w - text.get_width()) / 2, (h - 80) / 2 - (len(maplist) / 2 - i) * 100])
+            screen.blit(text, [(w - text.get_width()) / 2, (h - 80) / 2 - (len(problemlist) / 2 - i) * 100])
         
         #イベント処理
         for event in pygame.event.get():
@@ -257,9 +263,9 @@ while True:
         finished, ans = gaming(screen)
         #答え確認
         if finished:
-            if ans == check:
-                car, the_map, loclist, road = setEasy(w, h)
-                set_test(loclist, 0)
+            if ans == problems.check:
+                car, the_map, loclist, road = setupMapfunction(w, h)
+                problems.set_test(loclist, 0)
                 setup(car, loclist, the_map, road, h, w, True)
                 mode = G_TEST
             else:
@@ -270,13 +276,13 @@ while True:
         finished, result = testing(screen)
         if finished:
             #答え確認、残りの問題が無くなったら終了
-            if result == check_test[testphase]:
-                testphase+=1
-                if testphase == len(check_test):
+            if result == problems.check_test[problems.testphase]:
+                problems.testphase+=1
+                if problems.testphase == len(problems.check_test):
                     mode = G_NAME
                 else:
                     car, the_map, loclist, road = setupMapfunction(w, h)
-                    problems.set_test(loclist, testphase)
+                    problems.set_test(loclist, problems.testphase)
                     setup(car, loclist, the_map, road, h, w, True)
             else:
                 mode = G_FIRED
