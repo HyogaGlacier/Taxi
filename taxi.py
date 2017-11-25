@@ -100,8 +100,8 @@ while True:
     elif mode == G_SELECT_MAP:
         if "problem.addition" in sys.modules:
             sys.modules.pop("problem.addition")
-        if "problem.xor" in sys.modules:
-            sys.modules.pop("problem.xor")
+        if "problem.xor01" in sys.modules:
+            sys.modules.pop("problem.xor01")
         screen.fill((255, 255, 255))
         text = font160.render("MAP SELECT", True,(0,0,0))
         screen.blit(text, [(w - text.get_width()) / 2, 0])
@@ -196,7 +196,12 @@ while True:
                             from problem.addition import *
                             set_problem(loclist)
                             setup(car,loclist,the_map,road,h,w,False)
-                        break
+                        elif problemlist[i] == "xor01":
+                            mode = G_GAME
+                            problemstr = "xor01"
+                            from problem.xor import *
+                            set_problem(loclist)
+                            setup(ca,loclist,the_map,road,h,w,False)
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
@@ -215,6 +220,12 @@ while True:
                         mode = G_GAME
                         problemstr = "addition"
                         from problem.addition import *
+                        set_problem(loclist)
+                        setup(car,loclist,the_map,road,h,w,False)
+                    elif problemlist[problemselector] == "xor01":
+                        mode = G_GAME
+                        problemstr = "xor01"
+                        from problem.xor01 import *
                         set_problem(loclist)
                         setup(car,loclist,the_map,road,h,w,False)
     
@@ -295,7 +306,7 @@ while True:
                     sys.exit()
                 elif event.key == K_RETURN:
                     username = textinput.get_text()
-                    ok = True
+                    ok = len(username)<64
                     for i in username:
                         if not i in "abcdefghijklmnopqretuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!?.,(){}[]@":
                             ok = False

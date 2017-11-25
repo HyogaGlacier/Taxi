@@ -24,7 +24,7 @@ def setEasy(w, h):
 
     loclist["What's the Difference"] = location(500, 300, "What's the Difference")
     loclist["What's the Difference"].description = "You can pickup the value '1st (- 2nd - 3rd)'."
-    loclist["What's the Difference"].create_waiting_passenger_function = whats_the_difference
+    loclist["What's the Difference"].arrival_function = whats_the_difference
     the_map[500][300] = loclist["What's the Difference"]
 
     loclist["Addition Alley"] = location(500, 500, "Addition Alley")

@@ -99,10 +99,8 @@ class location:
 # void taxi_garage(location& here, incoming_list& incoming)
 def taxi_garage(car):
     global code
-    print("\nThe taxi is back in the garage. Program complete.")
     if code[:len(code)//2]==code[len(code)//2:]:
         code=code[:len(code)//2]
-    print(code)
     car.ingarage = True
 
 # void post_office_arrive(location& here, incoming_list& incoming)
@@ -166,6 +164,7 @@ def divide_and_conquer(here, incoming):
                 global ans
                 ans = ""
                 car.ingarage = True
+                return
             ret /= v
         here.outgoing.append(ret)
         del incoming
@@ -174,8 +173,8 @@ def divide_and_conquer(here, incoming):
 def whats_the_difference(here, incoming):
     if len(incoming)>0:
         # double
-        assert isinstance(v, int),  "error: requires a numerical value"
         ret = incoming[0]
+        assert isinstance(ret, int),  "error: requires a numerical value"
         for i in range(1,len(incoming)):
             # taxi_value
             v = incoming[i]
@@ -468,7 +467,7 @@ def setup(car_, loclist_, the_map_, road_,  h_, w_, test_mode):
 
 def get_score():
     global code
-    return len(code), car.miles_driven
+    return len("\n".join(code)), car.miles_driven
 
 def gaming(screen):
     global car, loclist, the_map, height, width, code
@@ -534,11 +533,13 @@ def gaming(screen):
         elif event.type == MOUSEBUTTONDOWN and event.button == 1:
             x,y = event.pos
             if width - 200 < x:
-                if not the_map[car.x][car.y] is None and len(the_map[car.x][car.y].outgoing)>0:
+                if not the_map[car.x][car.y] is None and len(the_map[car.x][car.y].outgoing)>0 and len(car.passengers)<3:
                     car.willpickup^=True
             elif car.willpickup:
                 for key,val in loclist.items():
                     if val.arrival_function is None:
+                        continue
+                    if val.name == "Taxi Garage":
                         continue
                     if val.x-20<x<val.x+20 and val.y-20<y<val.y+20:
                         car.pickup_passenger(val.x,val.y)
