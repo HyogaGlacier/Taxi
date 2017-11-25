@@ -110,7 +110,6 @@ def post_office_arrive(here, incoming):
     for v in incoming:
         # assert isinstance(v, str),  "error: post office cannot handle non-string values"
         ans += str(v)
-        print(v)
     del incoming
 
 # void post_office_create(location& here)
@@ -574,6 +573,9 @@ def gaming(screen):
                 sys.exit()
     #if car.ingarage:
     #    print("\n".join(code))
+    if car.ingarage:
+        print("Your Code is:")
+        print("\n".join(code))
     return car.ingarage, ans
 
 def testing(screen):

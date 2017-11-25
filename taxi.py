@@ -175,7 +175,7 @@ while True:
         #イベント処理
         for event in pygame.event.get():
             if event.type == QUIT:
-                endgame()
+                gameend()
             #クリック処理
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
@@ -191,7 +191,7 @@ while True:
             #キー処理
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    endgame()
+                    gameend()
                 #セレクタ
                 elif event.key == K_DOWN:
                     mapselector = min(mapselector + 1, len(maplist) - 1)
@@ -212,19 +212,19 @@ while True:
         text = font160.render("PROBLEM SELECT", True, (0, 0, 0))
         screen.blit(text, [(w - text.get_width()) / 2, 0])
         x, y = pygame.mouse.get_pos()
-        #problem選択欄は1つあたり240x80位。
+        #problem選択欄は1つあたり320x80位。
         for i in range(len(problemlist)):
-            if w / 2 - 80 < x < w / 2 + 80 and h / 2 - 50 - (len(problemlist) / 2 - i) * 100 < y < h / 2 + 30 - (len(problemlist) / 2 - i) * 100:
+            if w / 2 - 80 < x < w / 2 + 80 and h / 2 - (len(problemlist) / 2 - i) * 100 < y < h / 2 + 180 - (len(problemlist) / 2 - i) * 100:
                 problemselector = i
                 break
         for i in range(len(problemlist)):
             if i == problemselector:
                 text = font80.render(problemlist[i], True, (255, 255, 255))
-                pygame.draw.rect(screen, (0, 0, 0), Rect(w / 2 - 120, (h - 80) / 2 - (len(problemlist) / 2 - i) * 100, 240, 80))
+                pygame.draw.rect(screen, (0, 0, 0), Rect(w / 2 - 160, h / 2 + 110 - (len(problemlist) / 2 - i) * 100, 320, 80))
             else:
                 text = font80.render(problemlist[i], True, (0, 0, 0))
-                pygame.draw.rect(screen, (255, 255, 255), Rect(w / 2 - 120, (h - 80) / 2 - (len(maplist) / 2 - i) * 100, 240, 80))
-            screen.blit(text, [(w - text.get_width()) / 2, (h - 80) / 2 - (len(problemlist) / 2 - i) * 100])
+                pygame.draw.rect(screen, (255, 255, 255), Rect(w / 2 - 160, h / 2 + 110 - (len(maplist) / 2 - i) * 100, 320, 80))
+            screen.blit(text, [(w - text.get_width()) / 2, h / 2 + 110 - (len(problemlist) / 2 - i) * 100])
         
         #イベント処理
         for event in pygame.event.get():
