@@ -1,10 +1,10 @@
 import sys
-check = "3\n"
+check = "3"
 def set_problem(loclist):
     loclist["Post Office"].outgoing = [1, 2]
 
 testphase = 0
-check_test = ["8\n", "6\n", "0\n"]
+check_test = ["8", "6", "0"]
 def set_test(loclist, i):
     if i == 0:
         loclist["Post Office"].outgoing = [3, 5]

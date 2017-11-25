@@ -7,7 +7,7 @@ def set_problem(loclist):
 
 
 testphase = 0
-check_test = ["0\n", "0\n", "1\n"]
+check_test = ["0", "0", "1"]
 
 
 def set_test(loclist, i):

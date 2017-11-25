@@ -261,6 +261,8 @@ while True:
     elif mode == G_GAME:
         screen.fill((255, 255, 255))
         finished, ans = gaming(screen)
+        text = font.render("Answer: " + problems.check + ", Your Output: " + ans, True, (0, 0, 0))
+        screen.blit(text, [450, h - 80])
         #答え確認
         if finished:
             if ans == problems.check:
@@ -274,6 +276,8 @@ while True:
     elif mode == G_TEST:
         screen.fill((255, 255, 255))
         finished, result = testing(screen)
+        text = font.render("Answer: " + problems.check_test[problems.testphase] + ", Your Output: " + result, True, (0, 0, 0))
+        screen.blit(text, [450, h - 80])
         if finished:
             #答え確認、残りの問題が無くなったら終了
             if result == problems.check_test[problems.testphase]:
