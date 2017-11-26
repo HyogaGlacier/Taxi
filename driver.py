@@ -580,8 +580,6 @@ def gaming(screen):
 
 def testing(screen):
     global car, loclist, the_map, height, width, code, usecode, codereader, codetimer
-    text = font.render("Testing...", True, (0,0,0))
-    screen.blit(text, [(width-text.get_width())/2,20])
     if codereader > 0:
         text = font.render(code[codereader-1], True, (200,0,0))
         screen.blit(text, [400, height-40])

@@ -1,10 +1,11 @@
 import sys
-check = "1\n"
+check = "1"
 
 
 def set_problem(loclist):
+    global testphase
     loclist["Post Office"].outgoing = [1, 0]
-
+    testphase = 0
 
 testphase = 0
 check_test = ["0", "0", "1"]

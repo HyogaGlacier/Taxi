@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import sys
 import os
+import random
 import importlib
 
 # データベース初期設定
@@ -17,7 +18,6 @@ def updatesql():
     txtrank = cur.fetchall()
     cur.execute("SELECT name, run FROM ranking WHERE map = \"" + mapstr + "\" AND problem = \"" + problemstr + "\" ORDER BY run LIMIT 5")
     runrank = cur.fetchall()
-    conn.commit()
 
 # ゲームの状態遷移
 G_TITLE = 0
@@ -234,12 +234,12 @@ while True:
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 x,y = event.pos
                 for i in range(len(problemlist)):
-                    if w / 2 - 80 < x < w / 2 + 80 and h / 2 - 50 - (len(problemlist) / 2 - i) * 100 < y < h / 2 + 30 - (len(problemlist) / 2 - i) * 100:
+                    if w / 2 - 80 < x < w / 2 + 80 and h / 2 - (len(problemlist) / 2 - i) * 100 < y < h / 2 + 180 - (len(problemlist) / 2 - i) * 100:
                         if problemlist[i] == "back":
                             mapdelete()
                             mode = G_SELECT_MAP
                         else:
-                            setproblem()
+                            problemset()
                             mode = G_GAME
             #キー処理
             elif event.type == KEYDOWN:
@@ -275,6 +275,8 @@ while True:
     # テスト中（基本的に画面含めdriverに投げます）
     elif mode == G_TEST:
         screen.fill((255, 255, 255))
+        text = font.render("Testing...({0}/{1})".format(problems.testphase, len(problems.check_test)), True, (0,0,0))
+        screen.blit(text, [(w-text.get_width())/2,20])
         finished, result = testing(screen)
         text = font.render("Answer: " + problems.check_test[problems.testphase] + ", Your Output: " + result, True, (0, 0, 0))
         screen.blit(text, [450, h - 80])
@@ -284,6 +286,8 @@ while True:
                 problems.testphase+=1
                 if problems.testphase == len(problems.check_test):
                     mode = G_NAME
+                    textinput = writer.TextInput()
+                    updatesql()
                 else:
                     car, the_map, loclist, road = setupMapfunction(w, h)
                     problems.set_test(loclist, problems.testphase)

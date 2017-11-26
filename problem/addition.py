@@ -1,7 +1,9 @@
 import sys
 check = "3"
 def set_problem(loclist):
+    global testphase
     loclist["Post Office"].outgoing = [1, 2]
+    testphase = 0
 
 testphase = 0
 check_test = ["8", "6", "0"]
